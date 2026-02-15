@@ -12,7 +12,7 @@
 
         body { 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
-            background-color: #f0f0f0; 
+            background-color: #000000; 
             margin: 0; 
             padding: 0; 
             display: flex;
@@ -154,12 +154,12 @@
 </div>
 
 <div class="container">
-    <h2>Feilmelding Parkeringssystem</h2>
+    <h2>Metrisk Robotparkering - Feilmelding</h2>
     
     <div id="systemDisplay" class="system-info">SYSTEM</div>
     <div id="addressDisplay">Skan kod QR dla adresu</div>
 
-    <form id="serviceForm">
+    <form action="https://formspree.io/f/TWOJ_KOD" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="system_lokacja" id="systemInput">
 
         <label>Navn og etternavn</label>
@@ -181,7 +181,7 @@
         </select>
 
         <label>Feilkode fra display (valgfritt)</label>
-        <input type="text" name="feilkode" inputmode="numeric" pattern="[0-9]*" placeholder="F.eks. 10">
+        <input type="text" name="feilkode" inputmode="numeric" pattern="[0-9]*" placeholder="F.eks. 33">
 
         <label>Beskrivelse av feilen</label>
         <textarea name="beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
@@ -195,9 +195,9 @@
 
 <div class="footer">
     <strong>METRISK ROBOTPARKERING AS</strong><br>
-    Karvesvingen 7, 0579 Oslo<br>
+    Karvesvingen 5, 0579 Oslo<br>
     Supporttelefon: +47 478 19 090<br>
-    Spesialist pa WÖHR parkeringssystemer
+    Spesialist på WÖHR parkeringssystemer
 </div>
 
 <script>
@@ -213,35 +213,7 @@
     }
 
     document.getElementById('systemInput').value = "System: " + systemNr + " | Adres: " + (formattedAdr || "Nie podano");
-    javascript
-<script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbzox7eCiMhjyip6UUkTsk-vn5UTs1W5GElJWi-ODmU/dev'
-  const form = document.getElementById('serviceForm')
-
-  form.addEventListener('submit', e => {
-    e.preventDefault()
-    // Zmiana tekstu przycisku na czas wysyłania
-    const btn = form.querySelector('.btn')
-    btn.disabled = true
-    btn.innerText = 'Sender...'
-
-    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-      .then(response => {
-          alert('Takk! Meldingen er sendt.')
-          btn.disabled = false
-          btn.innerText = 'Send feilmelding'
-          form.reset()
-      })
-      .catch(error => {
-          console.error('Error!', error.message)
-          alert('Noe gikk galt. Prøv igjen.')
-          btn.disabled = false
-          btn.innerText = 'Send feilmelding'
-      })
-  })
-</script>
 </script>
 
 </body>
 </html>
-
