@@ -24,12 +24,12 @@
         .top-banner {
             background-color: var(--wohr-yellow);
             width: 100%;
-            height: 100px; /* Nieco niższy baner */
+            height: 100px;
             position: relative;
             z-index: 1;
         }
 
-        /* Mały, zgrabny boks z logo */
+        /* Mały, zgrabny boks z logo - nie przysłania napisów */
         .logo-box {
             background: white;
             padding: 8px 12px;
@@ -40,7 +40,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 2;
-            width: 150px; /* Zmniejszona szerokość */
+            width: 150px;
             text-align: center;
         }
 
@@ -50,12 +50,12 @@
             display: block;
         }
 
-        /* Główny kontener formularza */
+        /* Główny kontener */
         .container { 
             max-width: 450px; 
             width: 90%;
             background: white; 
-            padding: 60px 25px 30px 25px; /* Odstęp u góry dopasowany do mniejszego logo */
+            padding: 60px 25px 30px 25px; 
             margin-top: -30px;
             border-radius: 0 0 8px 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
@@ -71,7 +71,7 @@
             margin-bottom: 20px;
         }
 
-        /* Numer systemu w żółtej ramce */
+        /* Numer systemu */
         .system-info { 
             background: var(--wohr-yellow); 
             color: var(--wohr-black);
@@ -79,9 +79,19 @@
             border: 1px solid var(--wohr-black);
             text-align: center;
             font-weight: bold;
-            margin-bottom: 25px;
+            margin-bottom: 5px;
             font-size: 16px;
             text-transform: uppercase;
+        }
+
+        /* Wyświetlanie adresu z kodu QR */
+        #addressDisplay {
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 25px;
+            font-weight: normal;
+            font-style: italic;
         }
 
         label { 
@@ -97,101 +107,4 @@
             width: 100%; 
             padding: 12px; 
             border: 1.5px solid #ccc; 
-            border-radius: 6px; 
-            font-size: 16px; 
-            box-sizing: border-box;
-            background-color: white;
-            -webkit-appearance: none; /* Poprawka wyglądu na iPhone */
-        }
-
-        .btn { 
-            background: var(--wohr-yellow); 
-            color: var(--wohr-black); 
-            border: none; 
-            padding: 18px; 
-            width: 100%; 
-            border-radius: 8px; 
-            font-size: 18px; 
-            cursor: pointer; 
-            margin-top: 25px; 
-            font-weight: 800;
-            text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(254, 213, 65, 0.4);
-        }
-
-        /* Wyśrodkowana stopka */
-        .footer { 
-            width: 100%;
-            max-width: 450px;
-            padding: 25px;
-            font-size: 12px; 
-            color: #444;
-            line-height: 1.6;
-            box-sizing: border-box;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-
-<div class="top-banner">
-    <div class="logo-box">
-        <img src="https://www.produktfakta.no/metrisk-robotparkering/bedrift-files/logo.svg" alt="Metrisk Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=METRISK';">
-    </div>
-</div>
-
-<div class="container">
-    <h2>Metrisk Robotparkering - Feilmelding</h2>
-    
-    <div id="systemDisplay" class="system-info">SYSTEM</div>
-
-    <form action="https://formspree.io/f/TWOJ_KOD" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="system_nr" id="systemInput">
-
-        <label>Navn og etternavn</label>
-        <input type="text" name="navn" placeholder="Ditt navn" required>
-
-        <label>Ditt mobilnummer (8 siffer)</label>
-        <input type="tel" name="telefon" placeholder="Mobilnummer" required>
-
-        <label>Plattformnummer</label>
-        <input type="number" name="plattform" placeholder="F.eks. 12" required>
-
-        <label>Hva er problemet?</label>
-        <select name="kategori">
-            <option value="starter_ikke">Systemet starter ikke</option>
-            <option value="uvanlig_lyd">Uvanlig lyd / Støy</option>
-            <option value="port_problem">Problem med port / dør</option>
-            <option value="oljelekkasje">Oljelekkasje</option>
-            <option value="annet">Annet</option>
-        </select>
-
-        <label>Feilkode fra display (valgfritt)</label>
-        <input type="text" name="feilkode" inputmode="numeric" pattern="[0-9]*" placeholder="F.eks. 10">
-
-        <label>Beskrivelse av feilen</label>
-        <textarea name="beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
-
-        <label>Last opp bilde (valgfritt)</label>
-        <input type="file" name="bilde" accept="image/*">
-
-        <button type="submit" class="btn">Send feilmelding</button>
-    </form>
-</div>
-
-<div class="footer">
-    <strong>METRISK ROBOTPARKERING AS</strong><br>
-    Karvesvingen 5, 0579 Oslo<br>
-    Supporttelefon: +47 478 19 090<br>
-    Spesialist på WÖHR parkeringssystemer
-</div>
-
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const systemNr = urlParams.get('sys') || 'UKJENT';
-    document.getElementById('systemDisplay').innerText = "SYSTEM " + systemNr;
-    document.getElementById('systemInput').value = systemNr;
-</script>
-
-</body>
-</html>
+            border-radius: 6
