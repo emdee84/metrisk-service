@@ -29,24 +29,29 @@
             z-index: 1;
         }
 
-        /* Mały, zgrabny boks z logo - nie przysłania napisów */
+        /* Boks z logo - dostosowany do nowego linku */
         .logo-box {
             background: white;
-            padding: 8px 12px;
+            padding: 5px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             position: absolute;
-            top: 20px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 2;
-            width: 150px;
+            width: 100px; /* Kwadratowy boks dla kwadratowego logo */
+            height: 100px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         .logo-box img {
-            max-width: 100%;
-            height: auto;
+            max-width: 90%;
+            max-height: 90%;
             display: block;
         }
 
@@ -69,6 +74,7 @@
             text-transform: uppercase;
             font-weight: 800;
             margin-bottom: 20px;
+            margin-top: 10px;
         }
 
         /* Numer systemu */
@@ -84,7 +90,6 @@
             text-transform: uppercase;
         }
 
-        /* Wyświetlanie adresu z kodu QR */
         #addressDisplay {
             text-align: center;
             font-size: 13px;
@@ -144,7 +149,7 @@
 
 <div class="top-banner">
     <div class="logo-box">
-        <img src="https://metrisk.no/assets/img/metrisk.png" alt="Metrisk Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=METRISK';">
+        <img src="https://media.licdn.com/dms/image/v2/C4D0BAQFymVTkd__KTA/company-logo_200_200/company-logo_200_200/0/1671103828829/metrisk_as_logo?e=2147483647&v=beta&t=bfVNrS3JZMZ3_pJzYuaxQqH0lEzbTuV3vLH1mCOZRuI" alt="Metrisk Logo">
     </div>
 </div>
 
@@ -192,25 +197,21 @@
     <strong>METRISK ROBOTPARKERING AS</strong><br>
     Karvesvingen 7, 0579 Oslo<br>
     Supporttelefon: +47 478 19 090<br>
-    Spesialist på WÖHR parkeringssystemer
+    Spesialist na WÖHR parkeringssystemer
 </div>
 
 <script>
-    // Skrypt odczytujący parametry z adresu URL (np. ?sys=5&adr=Oslo-Gata-1)
     const urlParams = new URLSearchParams(window.location.search);
     const systemNr = urlParams.get('sys') || 'UKJENT';
     const systemAdr = urlParams.get('adr') || '';
 
-    // Formatowanie adresu (zamiana myślników na spacje)
     const formattedAdr = systemAdr.replace(/-/g, ' ');
 
-    // Wyświetlanie na stronie
     document.getElementById('systemDisplay').innerText = "SYSTEM " + systemNr;
     if (systemAdr) {
         document.getElementById('addressDisplay').innerText = formattedAdr;
     }
 
-    // Przekazanie kompletu danych do Formspree
     document.getElementById('systemInput').value = "System: " + systemNr + " | Adres: " + (formattedAdr || "Nie podano");
 </script>
 
