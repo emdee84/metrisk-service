@@ -159,7 +159,7 @@
     <div id="systemDisplay" class="system-info">SYSTEM</div>
     <div id="addressDisplay">Skan kod QR dla adresu</div>
 
-    <form action="https://formspree.io/f/TWOJ_KOD" method="POST" enctype="multipart/form-data">
+    <form id="serviceForm">
         <input type="hidden" name="system_lokacja" id="systemInput">
 
         <label>Navn og etternavn</label>
@@ -197,7 +197,7 @@
     <strong>METRISK ROBOTPARKERING AS</strong><br>
     Karvesvingen 7, 0579 Oslo<br>
     Supporttelefon: +47 478 19 090<br>
-    Spesialist na WÖHR parkeringssystemer
+    Spesialist pa WÖHR parkeringssystemer
 </div>
 
 <script>
@@ -213,7 +213,35 @@
     }
 
     document.getElementById('systemInput').value = "System: " + systemNr + " | Adres: " + (formattedAdr || "Nie podano");
+    javascript
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbzox7eCiMhjyip6UUkTsk-vn5UTs1W5GElJWi-ODmU/dev'
+  const form = document.getElementById('serviceForm')
+
+  form.addEventListener('submit', e => {
+    e.preventDefault()
+    // Zmiana tekstu przycisku na czas wysyłania
+    const btn = form.querySelector('.btn')
+    btn.disabled = true
+    btn.innerText = 'Sender...'
+
+    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+      .then(response => {
+          alert('Takk! Meldingen er sendt.')
+          btn.disabled = false
+          btn.innerText = 'Send feilmelding'
+          form.reset()
+      })
+      .catch(error => {
+          console.error('Error!', error.message)
+          alert('Noe gikk galt. Prøv igjen.')
+          btn.disabled = false
+          btn.innerText = 'Send feilmelding'
+      })
+  })
+</script>
 </script>
 
 </body>
 </html>
+
