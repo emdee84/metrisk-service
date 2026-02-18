@@ -9,17 +9,16 @@
         :root { --wohr-yellow: #fed541; --wohr-black: #1a1a1a; }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
         .top-banner { background-color: var(--wohr-black); width: 100%; height: 100px; position: relative; z-index: 1; }
-        .logo-box { background: white; padding: 5px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 2; width: 100px; height: 100px; text-align: center; display: flex; align-items: center; justify-content: center; }
-        .logo-box img { max-width: 90%; max-height: 90%; display: block; }
-        .container { max-width: 450px; width: 90%; background: white; padding: 60px 25px 30px 25px; margin-top: -30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 0; }
-        h2 { color: var(--wohr-black); text-align: center; font-size: 19px; text-transform: uppercase; font-weight: 800; margin-bottom: 20px; margin-top: 10px; }
-        .system-info { background: var(--wohr-yellow); color: var(--wohr-black); padding: 10px; border: 1px solid var(--wohr-black); text-align: center; font-weight: bold; margin-bottom: 5px; font-size: 16px; text-transform: uppercase; }
+        .logo-box { background: white; padding: 5px; border-radius: 8px; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 2; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .logo-box img { max-width: 90%; max-height: 90%; }
+        .container { max-width: 450px; width: 90%; background: white; padding: 60px 25px 30px 25px; margin-top: -30px; border-radius: 0 0 8px 8px; z-index: 0; }
+        h2 { color: var(--wohr-black); text-align: center; font-size: 19px; text-transform: uppercase; font-weight: 800; }
+        .system-info { background: var(--wohr-yellow); color: var(--wohr-black); padding: 10px; border: 1px solid var(--wohr-black); text-align: center; font-weight: bold; margin-bottom: 5px; }
         #addressDisplay { text-align: center; font-size: 13px; color: #666; margin-bottom: 25px; font-style: italic; }
-        label { display: block; margin: 18px 0 6px; font-weight: bold; font-size: 13px; text-transform: uppercase; color: #1a1a1a; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1.5px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background-color: white; }
-        .btn { background: var(--wohr-yellow); color: var(--wohr-black); border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 10px rgba(254, 213, 65, 0.4); }
-        .btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
-        .footer { width: 100%; max-width: 450px; padding: 25px; font-size: 12px; color: #444; line-height: 1.6; box-sizing: border-box; text-align: center; }
+        label { display: block; margin: 18px 0 6px; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1.5px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .btn { background: var(--wohr-yellow); color: var(--wohr-black); border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: 800; text-transform: uppercase; }
+        .footer { width: 100%; max-width: 450px; padding: 25px; font-size: 12px; color: #444; text-align: center; }
     </style>
 </head>
 <body>
@@ -32,19 +31,18 @@
 
 <div class="container">
     <h2>Metrisk Robotparkering Feilmelding</h2>
-    
     <div id="systemDisplay" class="system-info">SYSTEM</div>
     <div id="addressDisplay">Skan kod QR for adresse</div>
 
     <form id="feilmeldingForm">
         <label>Navn og etternavn</label>
-        <input type="text" id="kunde_navn" placeholder="Ditt navn" required>
+        <input type="text" id="kunde_navn" required>
 
-        <label>Ditt mobilnummer (8 siffer)</label>
-        <input type="tel" id="telefonnummer" placeholder="Mobilnummer" required>
+        <label>Ditt mobilnummer</label>
+        <input type="tel" id="telefonnummer" required>
 
         <label>Plattformnummer</label>
-        <input type="number" id="plattform" placeholder="F.eks. 12" required>
+        <input type="number" id="plattform" required>
 
         <label>Hva er problemet?</label>
         <select id="kategori">
@@ -55,79 +53,71 @@
             <option value="annet">Annet</option>
         </select>
 
-        <label>Feilkode fra display (valgfritt)</label>
-        <input type="text" id="feilkode" placeholder="F.eks. 10">
+        <label>Feilkode</label>
+        <input type="text" id="feilkode">
 
-        <label>Beskrivelse av feilen</label>
-        <textarea id="beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
+        <label>Beskrivelse</label>
+        <textarea id="beskrivelse" rows="3"></textarea>
 
-        <label>Last opp bilde (valgfritt)</label>
-        <input type="file" id="bilde_fil" accept="image/*">
-
-        <button type="submit" id="submitBtn" class="btn">Send feilmelding</button>
+        <button type="button" onclick="sendData()" id="submitBtn" class="btn">Send feilmelding</button>
     </form>
 </div>
 
 <div class="footer">
-    <strong>METRISK ROBOTPARKERING AS</strong><br>
-    Karvesvingen 7, 0579 Oslo<br>
-    Supporttelefon: +47 478 19 090
+    <strong>METRISK ROBOTPARKERING AS</strong>
 </div>
 
 <script>
-    // === KONFIGURASJON SUPABASE ===
-    // Wklej tutaj swoje dane z Supabase (Settings -> API)
-    const SUPABASE_URL = 'https://balmlttchnahegbtmygd.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'sb_publishable_ovyS_GIhBMaNSC1_8D5BDg_Z7EzmtXT';
-    // ==============================
+    // === TUTAJ WKLEJ SWOJE DANE ===
+    const SUPABASE_URL = 'TWOJ_URL_Z_SUPABASE'; 
+    const SUPABASE_ANON_KEY = 'TWOJ_KLUCZ_ANON_Z_SUPABASE';
+    // =============================
 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // QR Code logic
     const urlParams = new URLSearchParams(window.location.search);
     const systemNr = urlParams.get('sys') || 'UKJENT';
     const systemAdr = urlParams.get('adr') || '';
-    const formattedAdr = systemAdr.replace(/-/g, ' ');
-
     document.getElementById('systemDisplay').innerText = "SYSTEM " + systemNr;
-    if (systemAdr) {
-        document.getElementById('addressDisplay').innerText = formattedAdr;
-    }
+    if (systemAdr) document.getElementById('addressDisplay').innerText = systemAdr.replace(/-/g, ' ');
 
-    const form = document.getElementById('feilmeldingForm');
-    const submitBtn = document.getElementById('submitBtn');
+    async function sendData() {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = "Sender...";
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Sender...";
+        console.log("Próba wysyłki danych...");
+
+        const payload = {
+            status: 'Ny',
+            kunde_navn: document.getElementById('kunde_navn').value,
+            telefonnummer: document.getElementById('telefonnummer').value,
+            plattform: document.getElementById('plattform').value,
+            kategori: document.getElementById('kategori').value,
+            feilkode: document.getElementById('feilkode').value,
+            beskrivelse: document.getElementById('beskrivelse').value,
+            system_info: "System: " + systemNr
+        };
 
         try {
-            const fileInput = document.getElementById('bilde_fil');
-            const file = fileInput.files[0];
-            let imageUrl = null;
-
-            // 1. Wysyłanie zdjęcia
-            if (file) {
-                const fileName = Date.now() + "_" + file.name;
-                const { data: uploadData, error: uploadError } = await _supabase.storage
-                    .from('bilder-fra-kunde')
-                    .upload(fileName, file);
-                
-                if (uploadError) throw uploadError;
-
-                const { data: publicUrlData } = _supabase.storage
-                    .from('bilder-fra-kunde')
-                    .getPublicUrl(fileName);
-                imageUrl = publicUrlData.publicUrl;
+            const { data, error } = await _supabase.from('zgloszenia').insert([payload]);
+            
+            if (error) {
+                console.error("Supabase Error:", error);
+                alert("Błąd Supabase: " + error.message);
+            } else {
+                alert("Takk! Meldingen er mottatt.");
+                document.getElementById('feilmeldingForm').reset();
             }
-
-            // 2. Wstawianie rekordu do bazy
-            const { error } = await _supabase
-                .from('zgloszenia')
-                .insert([{
-                    status: 'Ny',
-                    kunde_navn: document.getElementById('kunde_navn').value,
-                    telefonnummer: document.getElementById('telefonnummer').value,
-                    plattform: document.getElementById('plattform').value,
-                    kategori: document.getElementById('kategori').value,
-                    feilkode: document.getElementById('feilkode
+        } catch (err) {
+            console.error("Fatal Error:", err);
+            alert("Krytyczny błąd: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Send feilmelding";
+        }
+    }
+</script>
+</body>
+</html>
