@@ -214,8 +214,65 @@
 
     document.getElementById('systemInput').value = "System: " + systemNr + " | Adres: " + (formattedAdr || "Nie podano");
 </script>
+    <form action="https://api.web3forms.com/submit" method="POST" id="serviceForm">
+
+    <input type="hidden" name="access_key" value="d0a1b882-ea7e-4040-943a-c6823410e664">
+    
+    <input type="hidden" name="system_lokacja" id="systemInput">
+    
+    <input type="hidden" name="subject" value="Nowe zgłoszenie awarii - Metrisk">
+    
+    <input type="hidden" name="redirect" value="https://emdee84.github.io/metrisk-service/">
+
+    <label>Navn og etternavn</label>
+    <input type="text" name="navn" placeholder="Ditt navn" required>
+
+    <label>Ditt mobilnummer (8 siffer)</label>
+    <input type="tel" name="telefon" placeholder="Mobilnummer" required>
+
+    <label>Plattformnummer</label>
+    <input type="number" name="plattform" placeholder="F.eks. 12" required>
+
+    <label>Hva er problemet?</label>
+    <select name="kategori">
+        <option value="starter_ikke">Systemet starter ikke</option>
+        <option value="uvanlig_lyd">Uvanlig lyd / Støy</option>
+        <option value="port_problem">Problem med port / dør</option>
+        <option value="oljelekkasje">Oljelekkasje</option>
+        <option value="annet">Annet</option>
+    </select>
+
+    <label>Feilkode fra display (valgfritt)</label>
+    <input type="text" name="feilkode" inputmode="numeric" pattern="[0-9]*" placeholder="F.eks. 10">
+
+    <label>Beskrivelse av feilen</label>
+    <textarea name="beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
+
+    <label>Last opp bilde (valgfritt)</label>
+    <input type="file" name="attachment" accept="image/*">
+
+    <button type="submit" class="btn">Send feilmelding</button>
+</form>
+
+<script>
+    // Obsługa parametrów z kodu QR (sys i adr)
+    const urlParams = new URLSearchParams(window.location.search);
+    const systemNr = urlParams.get('sys') || 'UKJENT';
+    const systemAdr = urlParams.get('adr') || '';
+    const formattedAdr = systemAdr.replace(/-/g, ' ');
+
+    // Wyświetlanie na stronie dla klienta
+    document.getElementById('systemDisplay').innerText = "SYSTEM " + systemNr;
+    if (systemAdr) {
+        document.getElementById('addressDisplay').innerText = formattedAdr;
+    }
+
+    // Wpisanie danych do ukrytego pola, które Web3Forms wyśle w mailu
+    document.getElementById('systemInput').value = "System: " + systemNr + " | Adres: " + (formattedAdr || "Nie podano");
+</script>
 
 </body>
 </html>
+
 
 
