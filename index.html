@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metrisk Robotparkering - Feilmelding</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --wohr-yellow: #fed541; --wohr-black: #1a1a1a; }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
@@ -17,6 +18,7 @@
         label { display: block; margin: 18px 0 6px; font-weight: bold; font-size: 13px; text-transform: uppercase; color: #1a1a1a; }
         input, select, textarea { width: 100%; padding: 12px; border: 1.5px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background-color: white; }
         .btn { background: var(--wohr-yellow); color: var(--wohr-black); border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 10px rgba(254, 213, 65, 0.4); }
+        .btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
         .footer { width: 100%; max-width: 450px; padding: 25px; font-size: 12px; color: #444; line-height: 1.6; box-sizing: border-box; text-align: center; }
     </style>
 </head>
@@ -34,21 +36,19 @@
     <div id="systemDisplay" class="system-info">SYSTEM</div>
     <div id="addressDisplay">Skan kod QR for adresse</div>
 
-    <form action="https://formspree.io/f/mkovzzjy" method="POST" enctype="multipart/form-data">
+    <form id="feilmeldingForm">
         
-        <input type="hidden" name="system_lokacja" id="systemInput">
-
         <label>Navn og etternavn</label>
-        <input type="text" name="Navn" placeholder="Ditt navn" required>
+        <input type="text" id="kunde_navn" name="Navn" placeholder="Ditt navn" required>
 
         <label>Ditt mobilnummer (8 siffer)</label>
-        <input type="tel" name="Telefon" placeholder="Mobilnummer" required>
+        <input type="tel" id="telefonnummer" name="Telefon" placeholder="Mobilnummer" required>
 
         <label>Plattformnummer</label>
-        <input type="number" name="Plattform" placeholder="F.eks. 12" required>
+        <input type="number" id="plattform" name="Plattform" placeholder="F.eks. 12" required>
 
         <label>Hva er problemet?</label>
-        <select name="Kategori">
+        <select id="kategori" name="Kategori">
             <option value="starter_ikke">Systemet starter ikke</option>
             <option value="uvanlig_lyd">Uvanlig lyd / Støy</option>
             <option value="port_problem">Problem med port / dør</option>
@@ -57,15 +57,15 @@
         </select>
 
         <label>Feilkode fra display (valgfritt)</label>
-        <input type="text" name="Feilkode" placeholder="F.eks. 10">
+        <input type="text" id="feilkode" name="Feilkode" placeholder="F.eks. 10">
 
         <label>Beskrivelse av feilen</label>
-        <textarea name="Beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
+        <textarea id="beskrivelse" name="Beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
 
         <label>Last opp bilde (valgfritt)</label>
-        <input type="file" name="Bilde" accept="image/*">
+        <input type="file" id="bilde_fil" name="Bilde" accept="image/*">
 
-        <button type="submit" class="btn">Send feilmelding</button>
+        <button type="submit" id="submitBtn" class="btn">Send feilmelding</button>
     </form>
 </div>
 
@@ -76,6 +76,12 @@
 </div>
 
 <script>
+    // 1. KONFIGURASJON SUPABASE - TUTAJ WKLEJ SWOJE DANE
+    const SUPABASE_URL = https://balmlttchnahegbtmygd.supabase.co;
+    const SUPABASE_ANON_KEY = sb_publishable_ovyS_GIhBMaNSC1_8D5BDg_Z7EzmtXT;
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Pobieranie danych z URL (QR kody)
     const urlParams = new URLSearchParams(window.location.search);
     const systemNr = urlParams.get('sys') || 'UKJENT';
     const systemAdr = urlParams.get('adr') || '';
@@ -85,8 +91,43 @@
     if (systemAdr) {
         document.getElementById('addressDisplay').innerText = formattedAdr;
     }
-    document.getElementById('systemInput').value = "System: " + systemNr + " | Adres: " + (formattedAdr || "Nie podano");
-</script>
 
-</body>
-</html>
+    // Obsługa wysyłki formularza
+    const form = document.getElementById('feilmeldingForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Sender...";
+
+        const fileInput = document.getElementById('bilde_fil');
+        const file = fileInput.files[0];
+        let imageUrl = null;
+
+        // 2. Upload zdjęcia (jeśli wybrano)
+        if (file) {
+            const fileName = Date.now() + "_" + file.name;
+            const { data: uploadData, error: uploadError } = await _supabase.storage
+                .from('bilder-fra-kunde')
+                .upload(fileName, file);
+            
+            if (uploadError) {
+                console.error("Upload error:", uploadError);
+            } else {
+                const { data: publicUrlData } = _supabase.storage
+                    .from('bilder-fra-kunde')
+                    .getPublicUrl(fileName);
+                imageUrl = publicUrlData.publicUrl;
+            }
+        }
+
+        // 3. Wysłanie danych do tabeli 'zgloszenia'
+        const { error } = await _supabase
+            .from('zgloszenia')
+            .insert([{
+                status: 'Ny',
+                kunde_navn: document.getElementById('kunde_navn').value,
+                telefonnummer: document.getElementById('telefonnummer').value,
+                plattform: document.getElementById('plattform').value,
+                kategori: document.getElementById('kategori').value,
