@@ -37,18 +37,17 @@
     <div id="addressDisplay">Skan kod QR for adresse</div>
 
     <form id="feilmeldingForm">
-        
         <label>Navn og etternavn</label>
-        <input type="text" id="kunde_navn" name="Navn" placeholder="Ditt navn" required>
+        <input type="text" id="kunde_navn" placeholder="Ditt navn" required>
 
         <label>Ditt mobilnummer (8 siffer)</label>
-        <input type="tel" id="telefonnummer" name="Telefon" placeholder="Mobilnummer" required>
+        <input type="tel" id="telefonnummer" placeholder="Mobilnummer" required>
 
         <label>Plattformnummer</label>
-        <input type="number" id="plattform" name="Plattform" placeholder="F.eks. 12" required>
+        <input type="number" id="plattform" placeholder="F.eks. 12" required>
 
         <label>Hva er problemet?</label>
-        <select id="kategori" name="Kategori">
+        <select id="kategori">
             <option value="starter_ikke">Systemet starter ikke</option>
             <option value="uvanlig_lyd">Uvanlig lyd / Støy</option>
             <option value="port_problem">Problem med port / dør</option>
@@ -57,13 +56,13 @@
         </select>
 
         <label>Feilkode fra display (valgfritt)</label>
-        <input type="text" id="feilkode" name="Feilkode" placeholder="F.eks. 10">
+        <input type="text" id="feilkode" placeholder="F.eks. 10">
 
         <label>Beskrivelse av feilen</label>
-        <textarea id="beskrivelse" name="Beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
+        <textarea id="beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
 
         <label>Last opp bilde (valgfritt)</label>
-        <input type="file" id="bilde_fil" name="Bilde" accept="image/*">
+        <input type="file" id="bilde_fil" accept="image/*">
 
         <button type="submit" id="submitBtn" class="btn">Send feilmelding</button>
     </form>
@@ -76,12 +75,14 @@
 </div>
 
 <script>
-    // 1. KONFIGURASJON SUPABASE - TUTAJ WKLEJ SWOJE DANE
-    const SUPABASE_URL = https://balmlttchnahegbtmygd.supabase.co;
-    const SUPABASE_ANON_KEY = sb_publishable_ovyS_GIhBMaNSC1_8D5BDg_Z7EzmtXT;
+    // === KONFIGURASJON SUPABASE ===
+    // Wklej tutaj swoje dane z Supabase (Settings -> API)
+    const SUPABASE_URL = 'https://balmlttchnahegbtmygd.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'sb_publishable_ovyS_GIhBMaNSC1_8D5BDg_Z7EzmtXT';
+    // ==============================
+
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Pobieranie danych z URL (QR kody)
     const urlParams = new URLSearchParams(window.location.search);
     const systemNr = urlParams.get('sys') || 'UKJENT';
     const systemAdr = urlParams.get('adr') || '';
@@ -92,7 +93,6 @@
         document.getElementById('addressDisplay').innerText = formattedAdr;
     }
 
-    // Obsługa wysyłki formularza
     const form = document.getElementById('feilmeldingForm');
     const submitBtn = document.getElementById('submitBtn');
 
@@ -101,33 +101,33 @@
         submitBtn.disabled = true;
         submitBtn.innerText = "Sender...";
 
-        const fileInput = document.getElementById('bilde_fil');
-        const file = fileInput.files[0];
-        let imageUrl = null;
+        try {
+            const fileInput = document.getElementById('bilde_fil');
+            const file = fileInput.files[0];
+            let imageUrl = null;
 
-        // 2. Upload zdjęcia (jeśli wybrano)
-        if (file) {
-            const fileName = Date.now() + "_" + file.name;
-            const { data: uploadData, error: uploadError } = await _supabase.storage
-                .from('bilder-fra-kunde')
-                .upload(fileName, file);
-            
-            if (uploadError) {
-                console.error("Upload error:", uploadError);
-            } else {
+            // 1. Wysyłanie zdjęcia
+            if (file) {
+                const fileName = Date.now() + "_" + file.name;
+                const { data: uploadData, error: uploadError } = await _supabase.storage
+                    .from('bilder-fra-kunde')
+                    .upload(fileName, file);
+                
+                if (uploadError) throw uploadError;
+
                 const { data: publicUrlData } = _supabase.storage
                     .from('bilder-fra-kunde')
                     .getPublicUrl(fileName);
                 imageUrl = publicUrlData.publicUrl;
             }
-        }
 
-        // 3. Wysłanie danych do tabeli 'zgloszenia'
-        const { error } = await _supabase
-            .from('zgloszenia')
-            .insert([{
-                status: 'Ny',
-                kunde_navn: document.getElementById('kunde_navn').value,
-                telefonnummer: document.getElementById('telefonnummer').value,
-                plattform: document.getElementById('plattform').value,
-                kategori: document.getElementById('kategori').value,
+            // 2. Wstawianie rekordu do bazy
+            const { error } = await _supabase
+                .from('zgloszenia')
+                .insert([{
+                    status: 'Ny',
+                    kunde_navn: document.getElementById('kunde_navn').value,
+                    telefonnummer: document.getElementById('telefonnummer').value,
+                    plattform: document.getElementById('plattform').value,
+                    kategori: document.getElementById('kategori').value,
+                    feilkode: document.getElementById('feilkode
