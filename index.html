@@ -3,101 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metrisk Service</title>
+    <title>Metrisk Robotparkering - Feilmelding</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --wohr-yellow: #fed541; --wohr-black: #1a1a1a; }
-        body { font-family: Arial, sans-serif; background-color: #1a1a1a; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        .top-banner { background-color: var(--wohr-black); width: 100%; height: 100px; position: relative; }
-        .logo-box { background: white; padding: 5px; border-radius: 8px; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .logo-box img { max-width: 80%; }
-        .container { max-width: 400px; width: 85%; background: white; padding: 50px 20px 20px 20px; margin-top: -20px; border-radius: 0 0 8px 8px; }
-        h2 { text-align: center; font-size: 16px; text-transform: uppercase; }
-        label { display: block; margin: 15px 0 5px; font-weight: bold; font-size: 12px; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
-        .btn { background: var(--wohr-yellow); color: var(--wohr-black); border: none; padding: 15px; width: 100%; border-radius: 4px; font-size: 16px; cursor: pointer; margin-top: 20px; font-weight: bold; text-transform: uppercase; }
-        .btn:disabled { background: #666; color: white; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
+        .top-banner { background-color: var(--wohr-black); width: 100%; height: 100px; position: relative; z-index: 1; }
+        .logo-box { background: white; padding: 5px; border-radius: 8px; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 2; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .logo-box img { max-width: 90%; max-height: 90%; }
+        .container { max-width: 450px; width: 90%; background: white; padding: 60px 25px 30px 25px; margin-top: -30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 0; }
+        h2 { color: var(--wohr-black); text-align: center; font-size: 19px; text-transform: uppercase; font-weight: 800; margin-bottom: 20px; margin-top: 10px; }
+        .system-info { background: var(--wohr-yellow); color: var(--wohr-black); padding: 10px; border: 1px solid var(--wohr-black); text-align: center; font-weight: bold; margin-bottom: 5px; font-size: 16px; text-transform: uppercase; }
+        #addressDisplay { text-align: center; font-size: 13px; color: #666; margin-bottom: 25px; font-style: italic; }
+        label { display: block; margin: 18px 0 6px; font-weight: bold; font-size: 13px; text-transform: uppercase; color: #1a1a1a; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1.5px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background-color: white; }
+        .btn { background: var(--wohr-yellow); color: var(--wohr-black); border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: 800; text-transform: uppercase; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .footer { width: 100%; max-width: 450px; padding: 25px; font-size: 12px; color: #444; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="top-banner">
     <div class="logo-box">
-        <img src="https://media.licdn.com/dms/image/v2/C4D0BAQFymVTkd__KTA/company-logo_200_200/company-logo_200_200/0/1671103828829/metrisk_as_logo?e=2147483647&v=beta&t=bfVNrS3JZMZ3_pJzYuaxQqH0lEzbTuV3vLH1mCOZRuI" alt="Logo">
+        <img src="https://media.licdn.com/dms/image/v2/C4D0BAQFymVTkd__KTA/company-logo_200_200/company-logo_200_200/0/1671103828829/metrisk_as_logo?e=2147483647&v=beta&t=bfVNrS3JZMZ3_pJzYuaxQqH0lEzbTuV3vLH1mCOZRuI" alt="Metrisk Logo">
     </div>
 </div>
 
 <div class="container">
-    <h2>Feilmelding</h2>
-    <form id="serviceForm">
-        <label>Navn</label>
-        <input type="text" id="k_navn" required>
+    <h2>Metrisk Robotparkering Feilmelding</h2>
+    
+    <div id="systemDisplay" class="system-info">SYSTEM</div>
+    <div id="addressDisplay">Skan kod QR for adresse</div>
 
-        <label>Telefon</label>
-        <input type="tel" id="k_tlf" required>
+    <form id="feilmeldingForm">
+        <label>Navn og etternavn</label>
+        <input type="text" id="kunde_navn" placeholder="Ditt navn" required>
 
-        <label>Plattform</label>
-        <input type="number" id="k_plat" required>
+        <label>Ditt mobilnummer (8 siffer)</label>
+        <input type="tel" id="telefonnummer" placeholder="Mobilnummer" required>
 
-        <label>Beskrivelse</label>
-        <textarea id="k_besk" rows="3" required></textarea>
+        <label>Plattformnummer</label>
+        <input type="number" id="plattform" placeholder="F.eks. 12" required>
 
-        <button type="button" onclick="handleSend()" id="sBtn" class="btn">Send feilmelding</button>
+        <label>Hva er problemet?</label>
+        <select id="kategori">
+            <option value="starter_ikke">Systemet starter ikke</option>
+            <option value="uvanlig_lyd">Uvanlig lyd / Støy</option>
+            <option value="port_problem">Problem med port / dør</option>
+            <option value="oljelekkasje">Oljelekkasje</option>
+            <option value="annet">Annet</option>
+        </select>
+
+        <label>Feilkode fra display (valgfritt)</label>
+        <input type="text" id="feilkode" placeholder="F.eks. 10">
+
+        <label>Beskrivelse av feilen</label>
+        <textarea id="beskrivelse" rows="3" placeholder="Beskriv problemet..."></textarea>
+
+        <button type="button" onclick="sendData()" id="submitBtn" class="btn">Send feilmelding</button>
     </form>
 </div>
 
+<div class="footer">
+    <strong>METRISK ROBOTPARKERING AS</strong><br>
+    Karvesvingen 7, 0579 Oslo<br>
+    Supporttelefon: +47 478 19 090
+</div>
+
 <script>
-    // === KONFIGURACJA ===
-    const S_URL = 'https://balmlttchnahegbtmygd.supabase.co'; // np. https://xyz.supabase.co
-    const S_KEY = 'sb_publishable_ovyS_GIhBMaNSC1_8D5BDg_Z7EzmtXT';
-    // ====================
+    // === KONFIGURASJON SUPABASE ===
+    const SUPABASE_URL = 'https://balmlttchnahegbtmygd.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'sb_publishable_ovyS_GIhBMaNSC1_8D5BDg_Z7EzmtXT';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Inicjalizacja klienta
-    const _supabase = supabase.createClient(S_URL, S_KEY);
+    // QR Code Logic - pobieranie parametrów z linku
+    const urlParams = new URLSearchParams(window.location.search);
+    const systemNr = urlParams.get('sys') || 'UKJENT';
+    const systemAdr = urlParams.get('adr') || '';
+    const formattedAdr = systemAdr.replace(/-/g, ' ');
 
-    async function handleSend() {
-        const btn = document.getElementById('sBtn');
-        
-        // Pobranie wartości
-        const navn = document.getElementById('k_navn').value;
-        const tlf = document.getElementById('k_tlf').value;
-        const plat = document.getElementById('k_plat').value;
-        const besk = document.getElementById('k_besk').value;
+    document.getElementById('systemDisplay').innerText = "SYSTEM " + systemNr;
+    if (systemAdr) {
+        document.getElementById('addressDisplay').innerText = formattedAdr;
+    }
 
-        if(!navn || !tlf || !plat || !besk) {
-            alert("Vennligst fyll ut alle felt");
-            return;
-        }
-
+    async function sendData() {
+        const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerText = "Sender...";
 
-        console.log("Start sending...");
+        const payload = {
+            status: 'Ny',
+            kunde_navn: document.getElementById('kunde_navn').value,
+            telefonnummer: document.getElementById('telefonnummer').value,
+            plattform: document.getElementById('plattform').value,
+            kategori: document.getElementById('kategori').value,
+            feilkode: document.getElementById('feilkode').value,
+            beskrivelse: document.getElementById('beskrivelse').value,
+            system_info: "System: " + systemNr + " | Adr: " + formattedAdr
+        };
 
         try {
-            // Test połączenia i wysyłka
-            const { data, error } = await _supabase
-                .from('zgloszenia')
-                .insert([
-                    { 
-                        kunde_navn: navn, 
-                        telefonnummer: tlf, 
-                        plattform: plat, 
-                        beskrivelse: besk,
-                        status: 'Ny'
-                    }
-                ]);
+            const { error } = await _supabase.from('zgloszenia').insert([payload]);
+            if (error) throw error;
 
-            if (error) {
-                console.error("Supabase Error Details:", error);
-                alert("Feil fra databasen: " + error.message + "\nKode: " + error.code);
-            } else {
-                alert("Takk! Meldingen er sendt.");
-                document.getElementById('serviceForm').reset();
-            }
+            alert("Takk! Feilmeldingen er mottatt.");
+            document.getElementById('feilmeldingForm').reset();
         } catch (err) {
-            console.error("Connection error:", err);
-            alert("Kunne ikke koble til serveren. Sjekk internett eller URL.");
+            alert("Feil: " + err.message);
         } finally {
             btn.disabled = false;
             btn.innerText = "Send feilmelding";
