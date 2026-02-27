@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metrisk Robotparkering - Feilmelding</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --wohr-yellow: #fed541; --wohr-black: #1a1a1a; }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
@@ -24,15 +23,8 @@
 </head>
 <body>
 
-<div class="top-banner">
-    <div class="logo-box">
-        <img src="https://media.licdn.com/dms/image/v2/C4D0BAQFymVTkd__KTA/company-logo_200_200/company-logo_200_200/0/1671103828829/metrisk_as_logo?e=2147483647&v=beta&t=bfVNrS3JZMZ3_pJzYuaxQqH0lEzbTuV3vLH1mCOZRuI" alt="Metrisk Logo">
-    </div>
-</div>
-
 <div class="container">
     <h2>Metrisk Robotparkering Feilmelding</h2>
-    
     <div id="systemDisplay" class="system-info">SYSTEM</div>
     <div id="addressDisplay">Skan kod QR for adresse</div>
 
@@ -72,12 +64,9 @@
 </div>
 
 <script>
-    // === KONFIGURASJON SUPABASE ===
-    const SUPABASE_URL = 'https://balmlttchnahegbtmygd.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'sb_publishable_ovyS_GIhBMaNSC1_8D5BDg_Z7EzmtXT';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // === KONFIGURASJON GOOGLE SHEETS ===
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKG4pY3sgnXJ9oxIo083E3H7epggm01Jo33aZzSB1df5ZLB4JxQpLhuAXfv2HYpRy9aQ/exec'; 
 
-    // QR Code Logic - pobieranie parametrów z linku
     const urlParams = new URLSearchParams(window.location.search);
     const systemNr = urlParams.get('sys') || 'UKJENT';
     const systemAdr = urlParams.get('adr') || '';
@@ -90,6 +79,13 @@
 
     async function sendData() {
         const btn = document.getElementById('submitBtn');
+        const form = document.getElementById('feilmeldingForm');
+        
+        if(!form.checkValidity()) {
+            alert("Vennligst fyll ut alle obligatoriske felt.");
+            return;
+        }
+
         btn.disabled = true;
         btn.innerText = "Sender...";
 
@@ -105,13 +101,19 @@
         };
 
         try {
-            const { error } = await _supabase.from('zgloszenia').insert([payload]);
-            if (error) throw error;
+            // Używamy fetch zamiast Supabase
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Ważne dla Google Script
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
             alert("Takk! Feilmeldingen er mottatt.");
-            document.getElementById('feilmeldingForm').reset();
+            form.reset();
         } catch (err) {
-            alert("Feil: " + err.message);
+            alert("Det oppstod en feil: " + err.message);
         } finally {
             btn.disabled = false;
             btn.innerText = "Send feilmelding";
